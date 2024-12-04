@@ -1,0 +1,113 @@
+print_rec_laptops(L):-
+    (   L = [] -> writeln("Sorry, cannot find a laptop in my knowledge base.")
+    ;   writeln(''),
+        writeln("Recommended laptops with reasoning: "),
+        writeln(''),
+        (   member(Model, L),
+            laptop_detail(Model, Price, RAM, Storage, Processor, Display, Graphics, Weight),
+            % Print specifications
+            format('Model: ~w~nPrice in LKR: ~w~nRAM: ~w~nStorage: ~w~nProcessor: ~w~nDisplay: ~w~nGraphics: ~w~nWeight: ~w~n', 
+                [Model, Price, RAM, Storage, Processor, Display, Graphics, Weight]),
+            writeln(''),
+            % Generate and print explanation using backward chaining
+            explain_specs(Price, RAM, Storage, Processor, Display, Graphics, Weight, Explanation),
+            format('Reasoning:~n~w~n', [Explanation]),
+            writeln('----------------------------------------'),
+            fail
+        ;   true
+        )
+    ).
+
+
+% Combine all explanations
+explain_specs(Price, RAM, Storage, Processor, Display, Graphics, Weight, Explanation) :-
+    explain_price(Price, PriceExp),
+    explain_ram(RAM, RAMExp),
+    explain_storage(Storage, StorageExp),
+    explain_processor(Processor, ProcessorExp),
+    explain_display(Display, DisplayExp),
+    explain_graphics(Graphics, GraphicsExp),
+    explain_weight(Weight, WeightExp),
+    atomic_list_concat([
+        'This laptop is recommended because:\n',
+        PriceExp, '\n',
+        RAMExp, '\n',
+        StorageExp, '\n',
+        ProcessorExp, '\n',
+        DisplayExp, '\n',
+        GraphicsExp, '\n',
+        WeightExp
+    ], Explanation).
+
+% Explanation predicates for each specification
+explain_price(Price, PriceExp) :-
+    (Price < 300000 -> 
+        PriceExp = '- Budget-friendly option under LKR 300,000'
+    ; Price < 500000 ->
+        PriceExp = '- Mid-range laptop with good value for money'
+    ;
+        PriceExp = '- Premium laptop with high-end specifications'
+    ).
+
+explain_ram(RAM, RAMExp) :-
+    (RAM >= 16 ->
+        RAMExp = '- 16GB RAM excellent for multitasking and demanding applications'
+    ; RAM >= 8 ->
+        RAMExp = '- 8GB RAM suitable for everyday computing tasks'
+    ;
+        RAMExp = '- Basic RAM configuration for light usage'
+    ).
+
+explain_storage(Storage, StorageExp) :-
+    (Storage >= 1 ->
+        StorageExp = '- Large storage capacity of 1TB or more'
+    ; Storage >= 512 ->
+        StorageExp = '- Decent 512GB storage for most users'
+    ;
+        StorageExp = '- Basic storage configuration'
+    ).
+
+explain_processor(Processor, ProcessorExp) :-
+    (sub_string(Processor, _, _, _, 'i9') ->
+        ProcessorExp = '- High-performance Intel Core i9 processor for intensive workloads'
+    ; sub_string(Processor, _, _, _, 'i7') ->
+        ProcessorExp = '- Powerful Intel Core i7 processor for demanding tasks'
+    ; sub_string(Processor, _, _, _, 'M3') ->
+        ProcessorExp = '- Latest Apple M3 chip offering excellent performance'
+    ;
+        ProcessorExp = '- Capable processor for general computing'
+    ).
+
+explain_display(Display, DisplayExp) :-
+    (sub_string(Display, _, _, _, '16 inch') ->
+        DisplayExp = '- Large 16-inch display ideal for productivity and entertainment'
+    ; sub_string(Display, _, _, _, '15.6 inch') ->
+        DisplayExp = '- Standard 15.6-inch display good for most uses'
+    ; sub_string(Display, _, _, _, '14 inch') ->
+        DisplayExp = '- Compact 14-inch display balancing portability and usability'
+    ;
+        DisplayExp = '- Display suitable for general use'
+    ).
+
+explain_graphics(Graphics, GraphicsExp) :-
+    (sub_string(Graphics, _, _, _, 'RTX 3080') ->
+        GraphicsExp = '- High-end RTX 3080 GPU for gaming and professional work'
+    ; sub_string(Graphics, _, _, _, 'RTX 3060') ->
+        GraphicsExp = '- Capable RTX 3060 GPU for gaming and content creation'
+    ; sub_string(Graphics, _, _, _, 'GTX 1650') ->
+        GraphicsExp = '- Entry-level dedicated GPU for basic graphics tasks'
+    ; sub_string(Graphics, _, _, _, 'Integrated') ->
+        GraphicsExp = '- Integrated graphics sufficient for everyday computing'
+    ).
+
+explain_weight(Weight, WeightExp) :-
+    (Weight =< 1.3 ->
+        WeightExp = '- Ultra-portable design under 1.3kg'
+    ; Weight =< 1.8 ->
+        WeightExp = '- Lightweight and portable under 1.8kg'
+    ; Weight =< 2.2 ->
+        WeightExp = '- Standard weight suitable for occasional transport'
+    ;
+        WeightExp = '- Desktop replacement with powerful components'
+    ).
+
