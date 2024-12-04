@@ -148,11 +148,11 @@ laptop_detail('Macbook pro 14 m3 pro', 650000, 16, 1, 'Apple M3', '14 inch', 'In
 laptop_detail('Macbook pro 14 m2 pro', 670000, 16, 1, 'Apple M2', '14 inch', 'Integrated Graphics', 1.25).
 
 %budget ranges
-budget_range(1,range_1).
-budget_range(2,range_2).
-budget_range(3,range_3).
-budget_range(4,range_4).
-budget_range(5,range_5).
+budget_range(1,range_1). % LKR 0 - LKR 150000
+budget_range(2,range_2). % LKR 150000 - LKR 300000
+budget_range(3,range_3). % LKR 300000 - LKR 400000
+budget_range(4,range_4). % LKR 400000 - LKR 500000
+budget_range(5,range_5). % LKR 500000 and above
 
 %laptop usage
 laptop_usage(1,daily_use).
@@ -162,48 +162,7 @@ laptop_usage(4,designing).
 
 
 %Rules
-
-start:-
-    writeln("==========================================="),nl,
-    writeln("Welcome to the Laptop Recommendation System"),nl,
-    writeln("==========================================="),nl,
-    budget_menu.
-
-budget_menu:-
-    writeln('Please choose your budget range: '),
-    writeln('1 ~ LKR 0 - LKR 150000'),
-    writeln('2 ~ LKR 150000 - LKR 300000'),
-    writeln('3 ~ LKR 300000 - LKR 400000'),
-    writeln('4 ~ LKR 400000 - LKR 500000'),
-    writeln('5 ~ LKR 500000 and above'),
-    read(A),
-    (budget_range(A, Budget) -> usage_menu(Budget);
-        writeln("Incorrect entry! choose a number between 1-5."), budget_menu
-    ).
-
-usage_menu(Budget):-
-    writeln('Please choose the purpose of the laptop: '),
-    writeln('1 ~ Daily Use'),
-    writeln('2 ~ Programming'),
-    writeln('3 ~ Gaming'),
-    writeln('4 ~ Designing'),
-    read(B),
-    (laptop_usage(B, Usage) -> os_menu(Budget, Usage);
-        writeln("Incorrect entry! choose a number between 1-4."), usage_menu(Budget)
-    ).
-
-os_menu(Budget, Usage):-
-    writeln('Please choose the Operating System: '),
-    writeln('1 ~ Windows'),
-    writeln('2 ~ Mac OS'),
-    read(C),
-    (   C = 1 -> touch_screen_menu(Budget, Usage)
-    ;   C = 2 -> find_mac(Budget, Usage)
-    ;   writeln("Incorrect entry! choose a number between 1-2."), os_menu(Budget, Usage)
-    ).
-
-
-find_mac(Budget, Usage):-
+find_mac(Budget, Usage,Details):-
     (Usage = daily_use -> 
         findall(Model, laptop(Model, Budget, mac_os, Usage, _, _, _, _, _, _, _, _), Models);
     Usage = programming -> 
@@ -214,60 +173,10 @@ find_mac(Budget, Usage):-
         findall(Model, laptop(Model, Budget, mac_os, _, _, _, Usage, _, _, _, _, _), Models)
     ),
     
-    print_rec_laptops(Models).
+    print_rec_laptops(Models,Details).
 
 
-touch_screen_menu(Budget, Usage):-
-    writeln('Do you prefer a touch screen laptop? '),
-    writeln('1 ~ Yes'),
-    writeln('2 ~ No'),
-    read(D),
-    (   D = 1 -> two_in_one_menu(Budget, Usage, touch_screen)
-    ;   D = 2 -> two_in_one_menu(Budget, Usage, none)
-    ;   writeln("Incorrect entry! choose a number between 1-2."), touch_screen_menu(Budget, Usage)
-    ).
-
-two_in_one_menu(Budget, Usage, Touch):-
-    writeln('Do you prefer a two-in-one laptop? '),
-    writeln('1 ~ Yes'),
-    writeln('2 ~ No'),
-    read(E),
-    (   E = 1 -> light_weight_menu(Budget, Usage, Touch, two_in_one)
-    ;   E = 2 -> light_weight_menu(Budget, Usage, Touch, none)
-    ;   writeln("Incorrect entry! choose a number between 1-2."), two_in_one_menu(Budget, Usage, Touch)
-    ).
-
-light_weight_menu(Budget, Usage, Touch, Two_in_one):-
-    writeln('Do you prefer a light weight laptop? '),
-    writeln('1 ~ Yes'),
-    writeln('2 ~ No'),
-    read(F),
-    (   F = 1 -> battery_menu(Budget, Usage, Touch, Two_in_one, light_weight)
-    ;   F = 2 -> battery_menu(Budget, Usage, Touch, Two_in_one, none)
-    ;   writeln("Incorrect entry! choose a number between 1-2."), light_weight_menu(Budget, Usage, Touch, Two_in_one)
-    ).
-
-battery_menu(Budget, Usage, Touch, Two_in_one, Light_weight):-
-    writeln('Do you prefer a long battery life laptop? '),
-    writeln('1 ~ Yes'),
-    writeln('2 ~ No'),
-    read(G),
-    (   G = 1 -> screen_size_menu(Budget, Usage, Touch, Two_in_one, Light_weight, long_battery_life)
-    ;   G = 2 -> screen_size_menu(Budget, Usage, Touch, Two_in_one, Light_weight, none)
-    ;   writeln("Incorrect entry! choose a number between 1-2."), battery_menu(Budget, Usage, Touch, Two_in_one, Light_weight)
-    ).
-
-screen_size_menu(Budget, Usage, Touch, Two_in_one, Light_weight, Long_battery_life):-
-    writeln('Do you prefer a large screen laptop? '),
-    writeln('1 ~ Yes'),
-    writeln('2 ~ No'),
-    read(H),
-    (   H = 1 -> find_windows(Budget, Usage, Touch, Two_in_one, Light_weight, Long_battery_life, large_screen)
-    ;   H = 2 -> find_windows(Budget, Usage, Touch, Two_in_one, Light_weight, Long_battery_life, none)
-    ;   writeln("Incorrect entry! choose a number between 1-2."), screen_size_menu(Budget, Usage, Touch, Two_in_one, Light_weight, Long_battery_life)
-    ).
-
-find_windows(Budget, Usage, Touch, Two_in_one, Light_weight, Long_battery_life, Screen_size):-
+find_windows(Budget, Usage, Touch, Two_in_one, Light_weight, Long_battery_life, Screen_size,Details):-
     (Touch = none -> TouchValue = _ ; TouchValue = Touch),
     (Two_in_one = none -> Two_in_oneValue = _ ; Two_in_oneValue = Two_in_one),
     (Light_weight = none -> Light_weightValue = _ ; Light_weightValue = Light_weight),
@@ -284,19 +193,27 @@ find_windows(Budget, Usage, Touch, Two_in_one, Light_weight, Long_battery_life, 
         findall(Model, laptop(Model, Budget, windows, _, _, _, Usage, TouchValue, Two_in_oneValue, Light_weightValue, Long_battery_lifeValue, Screen_sizeValue), Models)
     ),
     
-    print_rec_laptops(Models).
+    print_rec_laptops(Models,Details).
 
 
-print_rec_laptops(L):-
-    (   L = [] -> writeln("Sorry, cannot find a laptop in my knowledge base.")
-    ;  writeln(''),
-       writeln("Recommended laptops: "),
-       writeln(''),
-        (   member(Model, L),
-            laptop_detail(Model, Price, RAM, Storage, Processor, Display, Graphics, Weight),
-            format('Model: ~w~nPrice in LKR: ~w~nRAM: ~w~nStorage: ~w~nProcessor: ~w~nDisplay: ~w~nGraphics: ~w~nWeight: ~w~n', [Model, Price, RAM, Storage, Processor, Display, Graphics, Weight]),
-            writeln(''),
-            fail
-        ;   true
+print_rec_laptops(L, Details) :-
+    (   L = [] -> 
+        Details = []
+    ;   findall(
+            json{
+                model: Model,
+                price: Price,
+                ram: RAM,
+                storage: Storage,
+                processor: Processor,
+                display: Display,
+                graphics: Graphics,
+                weight: Weight
+            },
+            (
+                member(Model, L),
+                laptop_detail(Model, Price, RAM, Storage, Processor, Display, Graphics, Weight)
+            ),
+            Details
         )
     ).
