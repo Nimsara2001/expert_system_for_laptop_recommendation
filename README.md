@@ -6,3 +6,6 @@
 - **Storage**: 1 TB
 - **Processor**: Apple M3
 
+    ### Explanation:
+
+

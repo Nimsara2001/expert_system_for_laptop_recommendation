@@ -26,8 +26,6 @@ def get_windows_recommendations(budget: str, usage: str, touch: str,
         return query[0]['Details']
     return []
 
-import streamlit as st
-
 def get_usage_type(usage: str) -> str:
     if usage == "Gaming":
         return "gaming"
@@ -112,7 +110,7 @@ if st.session_state.budget_range and not st.session_state.usage_type:
     st.session_state.show_usage_selector = True
 
 if st.session_state.show_usage_selector:
-    usage_options = ["Gaming", "Programming", "Designing", "Daily Use"]
+    usage_options = ["Programming", "Designing", "Daily Use","Gaming"]
     usage = st.selectbox("Select primary use:", usage_options, key="usage_select")
     if st.button("Confirm Usage"):
         st.session_state.usage_type = get_usage_type(usage)
@@ -142,16 +140,43 @@ if st.session_state.usage_type and not st.session_state.preferred_os:
                 "role": "assistant",
                 "content": "Here are some Mac laptops I recommend:"
             })
+            
             for laptop in recommendations:
+                # Wrap the processor in single quotes to handle spaces correctly
+                processor_quoted = f"'{laptop['processor']}'"
+
+                # Query explanations from Prolog
+                explain_price = list(prolog.query(f"explain_price({st.session_state.budget_range}, X)"))
+                explain_ram = list(prolog.query(f"explain_ram({laptop['ram']}, X)"))
+                explain_storage = list(prolog.query(f"explain_storage({laptop['storage']}, X)"))
+                explain_processor = list(prolog.query(f"explain_processor({processor_quoted}, X)"))
+
+                # Extract explanations from the Prolog query results
+                price_explanation = explain_price[0]['X'] if explain_price else "No explanation available."
+                ram_explanation = explain_ram[0]['X'] if explain_ram else "No explanation available."
+                storage_explanation = explain_storage[0]['X'] if explain_storage else "No explanation available."
+                processor_explanation = explain_processor[0]['X'] if explain_processor else "No explanation available."
+
+                # Appending messages with the new format
                 st.session_state.messages.append({
-                "role": "assistant",
-                "content": f"### {laptop['model']}\n- **Price**: {laptop['price']}\n- **RAM**: {laptop['ram']}\n- **Storage**: {laptop['storage']}\n- **Processor**: {laptop['processor']}"
-            })
+                    "role": "assistant",
+                    "content": f"""
+            ### {laptop['model']}
+            **Price**: {laptop['price']} LKR
+
+            **Explanation**:  
+            - {price_explanation}  
+            {ram_explanation}  
+            {storage_explanation}  
+            {processor_explanation}
+            """
+                })
+
         else:
             st.session_state.show_touch_screen_option = True
             st.session_state.messages.append({
                 "role": "assistant",
-                "content": "Do you prefer a touch screen laptop?"
+                "content": "Choose your preferences for a Windows laptop:"
             })
         st.rerun()
 
@@ -166,7 +191,7 @@ if st.session_state.show_touch_screen_option and st.session_state.touch_screen_p
         })
         st.session_state.messages.append({
             "role": "assistant",
-            "content": "Do you prefer a two-in-one laptop?"
+            "content": "Choose your preferences for a Windows laptop:"
         })
         st.rerun()
 
@@ -181,7 +206,7 @@ if st.session_state.touch_screen_preference and st.session_state.two_in_one_pref
         })
         st.session_state.messages.append({
             "role": "assistant",
-            "content": "Do you prefer a light weight laptop?"
+            "content": "Choose your preferences for a Windows laptop:"
         })
         st.rerun()
 
@@ -196,7 +221,7 @@ if st.session_state.two_in_one_preference and st.session_state.light_weight_pref
         })
         st.session_state.messages.append({
             "role": "assistant",
-            "content": "Do you prefer a long battery life laptop?"
+            "content": "Choose your preferences for a Windows laptop:"
         })
         st.rerun()
 
@@ -211,7 +236,7 @@ if st.session_state.light_weight_preference and st.session_state.battery_life_pr
         })
         st.session_state.messages.append({
             "role": "assistant",
-            "content": "Do you prefer a large screen laptop?"
+            "content": "Choose your preferences for a Windows laptop:"
         })
         st.rerun()
 
@@ -239,8 +264,32 @@ if st.session_state.battery_life_preference and st.session_state.large_screen_pr
             "content": "Here are some Windows laptops I recommend:"
         })
         for laptop in recommendations:
-            st.session_state.messages.append({
-                "role": "assistant",
-                "content": f"### {laptop['model']}\n- **Price**: {laptop['price']}\n- **RAM**: {laptop['ram']}\n- **Storage**: {laptop['storage']}\n- **Processor**: {laptop['processor']}"
-            })
-        st.rerun()
+                # Wrap the processor in single quotes to handle spaces correctly
+                processor_quoted = f"'{laptop['processor']}'"
+
+                # Query explanations from Prolog
+                explain_price = list(prolog.query(f"explain_price({st.session_state.budget_range}, X)"))
+                explain_ram = list(prolog.query(f"explain_ram({laptop['ram']}, X)"))
+                explain_storage = list(prolog.query(f"explain_storage({laptop['storage']}, X)"))
+                explain_processor = list(prolog.query(f"explain_processor({processor_quoted}, X)"))
+
+                # Extract explanations from the Prolog query results
+                price_explanation = explain_price[0]['X'] if explain_price else "No explanation available."
+                ram_explanation = explain_ram[0]['X'] if explain_ram else "No explanation available."
+                storage_explanation = explain_storage[0]['X'] if explain_storage else "No explanation available."
+                processor_explanation = explain_processor[0]['X'] if explain_processor else "No explanation available."
+
+                # Appending messages with the new format
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": f"""
+            ### {laptop['model']}
+            **Price**: {laptop['price']} LKR
+
+            **Explanation**:  
+            - {price_explanation}  
+            {ram_explanation}  
+            {storage_explanation}  
+            {processor_explanation}
+            """
+                })

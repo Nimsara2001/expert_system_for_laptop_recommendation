@@ -217,3 +217,72 @@ print_rec_laptops(L, Details) :-
             Details
         )
     ).
+
+% Explanation predicates for each specification
+explain_price(range_1, 'Budget-friendly option under LKR 300,000.').
+explain_price(range_2, 'Budget-friendly option under LKR 300,000.').
+explain_price(range_3, 'Mid-range laptop with good value for money.').
+explain_price(range_4, 'Mid-range laptop with good value for money.').
+explain_price(_, 'Premium laptop with high-end specifications.').
+
+explain_ram(RAM, RAMExp) :-
+    (RAM >= 16 ->
+        RAMExp = '- 16GB RAM excellent for multitasking and demanding applications'
+    ; RAM >= 8 ->
+        RAMExp = '- 8GB RAM suitable for everyday computing tasks'
+    ;
+        RAMExp = '- Basic RAM configuration for light usage'
+    ).
+
+explain_storage(Storage, StorageExp) :-
+    (Storage >= 1 ->
+        StorageExp = '- Large storage capacity of 1TB or more'
+    ; Storage >= 512 ->
+        StorageExp = '- Decent 512GB storage for most users'
+    ;
+        StorageExp = '- Basic storage configuration'
+    ).
+
+explain_processor(Processor, ProcessorExp) :-
+    (sub_string(Processor, _, _, _, 'i9') ->
+        ProcessorExp = '- High-performance Intel Core i9 processor for intensive workloads'
+    ; sub_string(Processor, _, _, _, 'i7') ->
+        ProcessorExp = '- Powerful Intel Core i7 processor for demanding tasks'
+    ; sub_string(Processor, _, _, _, 'M3') ->
+        ProcessorExp = '- Latest Apple M3 chip offering excellent performance'
+    ;
+        ProcessorExp = '- Capable processor for general computing'
+    ).
+
+explain_display(Display, DisplayExp) :-
+    (sub_string(Display, _, _, _, '16 inch') ->
+        DisplayExp = '- Large 16-inch display ideal for productivity and entertainment'
+    ; sub_string(Display, _, _, _, '15.6 inch') ->
+        DisplayExp = '- Standard 15.6-inch display good for most uses'
+    ; sub_string(Display, _, _, _, '14 inch') ->
+        DisplayExp = '- Compact 14-inch display balancing portability and usability'
+    ;
+        DisplayExp = '- Display suitable for general use'
+    ).
+
+explain_graphics(Graphics, GraphicsExp) :-
+    (sub_string(Graphics, _, _, _, 'RTX 3080') ->
+        GraphicsExp = '- High-end RTX 3080 GPU for gaming and professional work'
+    ; sub_string(Graphics, _, _, _, 'RTX 3060') ->
+        GraphicsExp = '- Capable RTX 3060 GPU for gaming and content creation'
+    ; sub_string(Graphics, _, _, _, 'GTX 1650') ->
+        GraphicsExp = '- Entry-level dedicated GPU for basic graphics tasks'
+    ; sub_string(Graphics, _, _, _, 'Integrated') ->
+        GraphicsExp = '- Integrated graphics sufficient for everyday computing'
+    ).
+
+explain_weight(Weight, WeightExp) :-
+    (Weight =< 1.3 ->
+        WeightExp = '- Ultra-portable design under 1.3kg'
+    ; Weight =< 1.8 ->
+        WeightExp = '- Lightweight and portable under 1.8kg'
+    ; Weight =< 2.2 ->
+        WeightExp = '- Standard weight suitable for occasional transport'
+    ;
+        WeightExp = '- Desktop replacement with powerful components'
+    ).
