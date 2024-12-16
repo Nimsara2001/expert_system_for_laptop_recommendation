@@ -12,3 +12,5 @@ get_recommendation(Budget, Usage, RAM, Recommendations) :-
     findall(Laptop, recommend_laptop(Budget, Usage, RAM, Laptop), Recommendations).
 
 
+
+
